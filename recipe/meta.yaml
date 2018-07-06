@@ -21,13 +21,14 @@ source:
   # - patches/return_values.patch   # return 0 in functions expecting int
 
 build:
-  number: 0
+  number: 1
   skip: true  # [win]
 
 requirements:
   build:
-    - toolchain
     - libtool
+    - {{ compiler('c') }}
+  host:
     - git
 
 test:
