@@ -28,8 +28,9 @@ requirements:
   build:
     - libtool
     - {{ compiler('c') }}
-  host:
     - git
+  host:
+  run:
 
 test:
   commands:
