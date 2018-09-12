@@ -21,7 +21,7 @@ source:
   # - patches/return_values.patch   # return 0 in functions expecting int
 
 build:
-  number: 1
+  number: 1001
   skip: true  # [win]
 
 requirements:
