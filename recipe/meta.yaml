@@ -21,12 +21,15 @@ source:
   # - patches/return_values.patch   # return 0 in functions expecting int
 
 build:
-  number: 1
-  skip: true  # [win]
+  number: 2
+  skip: True    # [win and vc<14]
 
 requirements:
   build:
-    - libtool
+    - posix      # [win]
+    - m2-make    # [win]
+    - clangdev   # [win]
+    - lld        # [win]
     - {{ compiler('c') }}
     - git
   host:
@@ -34,8 +37,10 @@ requirements:
 
 test:
   commands:
-    - test -f ${PREFIX}/include/symmetrica/macro.h
-    - test -f ${PREFIX}/lib/libsymmetrica.a
+    - test -f ${PREFIX}/include/symmetrica/macro.h   # [unix]
+    - test -f ${PREFIX}/lib/libsymmetrica.a          # [unix]
+    - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1       # [win]
+    - if not exist %LIBRARY_LIB%\\libsymmetrica.a exit 1           # [win]
 
 about:
   home: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/index.html

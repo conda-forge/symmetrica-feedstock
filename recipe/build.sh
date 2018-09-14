@@ -1,8 +1,17 @@
 #!/bin/bash
 
-export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
-export LDFLAGS="-L$PREFIX/lib $LDFLAGS"
-export LD_LIBRARY_PATH="$PREFIX/lib:$LD_LIBRARY_PATH"
+if [[ `uname` == MINGW* ]]; then
+    export CC=clang-cl
+    export RANLIB=llvm-ranlib
+    export LINK=lld-link
+    export AR=llvm-ar
+    export PATH="$PREFIX/Library/bin:$BUILD_PREFIX/Library/bin:$PATH"
+else
+    export RANLIB=ranlib
+    export AR=ar
+    export LINK=ld
+fi
+
 export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
 
 chmod 644 *.c
@@ -18,7 +27,7 @@ done
 
 cp "$RECIPE_DIR"/patches/makefile .
  
-make
+make RANLIB=$RANLIB AR=$AR LINK=$LINK CC=$CC
 make test
 
 actual=`echo 123 | ./test`
@@ -31,7 +40,15 @@ if [ "$actual" != "$expected" ]; then
     exit 1
 fi
 
-mkdir -p "$PREFIX"/lib
-cp libsymmetrica.a "$PREFIX"/lib/
-mkdir -p "$PREFIX"/include/symmetrica
-cp *.h "$PREFIX"/include/symmetrica/
+
+if [[ `uname` == MINGW* ]]; then
+    mkdir -p "$PREFIX"/Library/lib
+    cp libsymmetrica.a "$PREFIX"/Library/lib/symmetrica.lib
+    mkdir -p "$PREFIX"/Library/include/symmetrica
+    cp *.h "$PREFIX"/Library/include/symmetrica/
+else
+    mkdir -p "$PREFIX"/lib
+    cp libsymmetrica.a "$PREFIX"/lib/
+    mkdir -p "$PREFIX"/include/symmetrica
+    cp *.h "$PREFIX"/include/symmetrica/
+fi
