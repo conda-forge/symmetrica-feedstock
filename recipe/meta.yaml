@@ -25,12 +25,8 @@ build:
 
 requirements:
   build:
-    - posix      # [win]
-    - m2-make    # [win]
-    - clangdev   # [win]
-    - lld        # [win]
+    - cmake
     - {{ compiler('c') }}
-    - ninja
   host:
   run:
 

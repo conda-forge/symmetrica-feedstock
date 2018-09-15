@@ -1,9 +1,13 @@
-copy "%RECIPE_DIR%\build.sh" .
-set MSYSTEM=MINGW%ARCH%
-set MSYS2_PATH_TYPE=inherit
-set CHERE_INVOKING=1
-FOR /F "delims=" %%i in ('cygpath.exe -u "%PREFIX%"') DO set "PREFIX=%%i"
-FOR /F "delims=" %%i in ('cygpath.exe -u "%BUILD_PREFIX%"') DO set "BUILD_PREFIX=%%i"
-FOR /F "delims=" %%i in ('cygpath.exe -u "%RECIPE_DIR%"') DO set "RECIPE_DIR=%%i"
-bash -lc "./build.sh"
+rm makefile
+copy "%RECIPE_DIR%"\CMakeLists.txt .
+
+cmake -G "NMake Makefiles" -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" -DCMAKE_BUILD_TYPE=Release .
+nmake
+nmake install
+
+echo 123 | test.exe > output.txt
+
+FC output.txt "%RECIPE_DIR%"\test_output.txt
+
 if errorlevel 1 exit 1
+
