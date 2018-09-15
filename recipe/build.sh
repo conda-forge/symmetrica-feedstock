@@ -5,16 +5,14 @@ if [[ `uname` == MINGW* ]]; then
     export RANLIB=llvm-ranlib
     export AR=llvm-ar
     export PATH="$PREFIX/Library/bin:$BUILD_PREFIX/Library/bin:$PATH"
-    export CFLAGS="-O2 $CFLAGS -Wno-return-type -DFAST -DALLTRUE"
+    export CFLAGS="-O2 -MD -Wno-return-type -DFAST -DALLTRUE"
 else
-    export RANLIB=ranlib
-    export AR=ar
     export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
 fi
 
 cp "$RECIPE_DIR"/patches/makefile .
  
-make RANLIB=$RANLIB AR=$AR LINK=$LINK CC=$CC
+make
 
 if [[ `uname` == MINGW* ]]; then
     mkdir -p "$PREFIX"/Library/lib
@@ -28,7 +26,7 @@ else
     cp *.h "$PREFIX"/include/symmetrica/
 fi
 
-make test RANLIB=$RANLIB AR=$AR CC=$CC
+make test
 
 actual=`echo 123 | ./test`
 expected=" 12.146304.367025.329675.766243.241881.295855.454217.088483.382315.
