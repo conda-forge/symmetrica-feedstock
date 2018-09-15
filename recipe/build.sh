@@ -14,17 +14,6 @@ fi
 
 export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
 
-chmod 644 *.c
-
-for patch in $RECIPE_DIR/patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    git apply -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
 cp "$RECIPE_DIR"/patches/makefile .
  
 make RANLIB=$RANLIB AR=$AR LINK=$LINK CC=$CC
