@@ -3,14 +3,12 @@
 if [[ `uname` == MINGW* ]]; then
     export CC=clang-cl
     export RANLIB=llvm-ranlib
-    export LINK=lld-link
     export AR=llvm-ar
     export PATH="$PREFIX/Library/bin:$BUILD_PREFIX/Library/bin:$PATH"
     export CFLAGS="-O2 $CFLAGS -Wno-return-type -DFAST -DALLTRUE"
 else
     export RANLIB=ranlib
     export AR=ar
-    export LINK=ld
     export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
 fi
 
@@ -30,7 +28,7 @@ else
     cp *.h "$PREFIX"/include/symmetrica/
 fi
 
-make test RANLIB=$RANLIB AR=$AR LINK=$LINK CC=$CC
+make test RANLIB=$RANLIB AR=$AR CC=$CC
 
 actual=`echo 123 | ./test`
 expected=" 12.146304.367025.329675.766243.241881.295855.454217.088483.382315.
