@@ -30,6 +30,7 @@ requirements:
     - clangdev   # [win]
     - lld        # [win]
     - {{ compiler('c') }}
+    - ninja
   host:
   run:
 
@@ -38,7 +39,7 @@ test:
     - test -f ${PREFIX}/include/symmetrica/macro.h   # [unix]
     - test -f ${PREFIX}/lib/libsymmetrica.a          # [unix]
     - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1       # [win]
-    - if not exist %LIBRARY_LIB%\\libsymmetrica.a exit 1           # [win]
+    - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1           # [win]
 
 about:
   home: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/index.html

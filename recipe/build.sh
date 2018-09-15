@@ -1,33 +1,23 @@
 #!/bin/bash
 
+CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
+
 if [[ `uname` == MINGW* ]]; then
     export CC=clang-cl
     export RANLIB=llvm-ranlib
     export AR=llvm-ar
     export PATH="$PREFIX/Library/bin:$BUILD_PREFIX/Library/bin:$PATH"
-    export CFLAGS="-O2 -MD -Wno-return-type -DFAST -DALLTRUE"
+    CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=$PREFIX/Library"
 else
-    export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
+    CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_POSITION_INDEPENDENT_CODE=yes"
 fi
 
-cp "$RECIPE_DIR"/patches/makefile .
- 
-make
+rm makefile
+cp "$RECIPE_DIR"/CMakeLists.txt .
 
-if [[ `uname` == MINGW* ]]; then
-    mkdir -p "$PREFIX"/Library/lib
-    cp libsymmetrica.a "$PREFIX"/Library/lib/symmetrica.lib
-    mkdir -p "$PREFIX"/Library/include/symmetrica
-    cp *.h "$PREFIX"/Library/include/symmetrica/
-    make test.o
-    clang test.o libsymmetrica.a -o test
-else
-    make test
-    mkdir -p "$PREFIX"/lib
-    cp libsymmetrica.a "$PREFIX"/lib/
-    mkdir -p "$PREFIX"/include/symmetrica
-    cp *.h "$PREFIX"/include/symmetrica/
-fi
+cmake -G "Ninja" $CMAKE_ARGS .
+ninja -j${CPU_COUNT}
+ninja install
 
 actual=`echo 123 | ./test`
 expected=" 12.146304.367025.329675.766243.241881.295855.454217.088483.382315.
