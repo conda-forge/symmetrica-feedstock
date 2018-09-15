@@ -6,13 +6,13 @@ if [[ `uname` == MINGW* ]]; then
     export LINK=lld-link
     export AR=llvm-ar
     export PATH="$PREFIX/Library/bin:$BUILD_PREFIX/Library/bin:$PATH"
+    export CFLAGS="-O2 -g $CFLAGS -DNOMINMAX -DFAST -DALLTRUE"
 else
     export RANLIB=ranlib
     export AR=ar
     export LINK=ld
+    export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
 fi
-
-export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
 
 cp "$RECIPE_DIR"/patches/makefile .
  
