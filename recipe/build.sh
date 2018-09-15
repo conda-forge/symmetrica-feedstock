@@ -6,7 +6,7 @@ if [[ `uname` == MINGW* ]]; then
     export LINK=lld-link
     export AR=llvm-ar
     export PATH="$PREFIX/Library/bin:$BUILD_PREFIX/Library/bin:$PATH"
-    export CFLAGS="-O2 -g $CFLAGS -DNOMINMAX -DFAST -DALLTRUE"
+    export CFLAGS="-O2 $CFLAGS -DFAST -DALLTRUE"
 else
     export RANLIB=ranlib
     export AR=ar
