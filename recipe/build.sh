@@ -19,14 +19,15 @@ if [[ `uname` == MINGW* ]]; then
     cp libsymmetrica.a "$PREFIX"/Library/lib/symmetrica.lib
     mkdir -p "$PREFIX"/Library/include/symmetrica
     cp *.h "$PREFIX"/Library/include/symmetrica/
+    make test.o
+    clang test.o libsymmetrica.a -o test
 else
+    make test
     mkdir -p "$PREFIX"/lib
     cp libsymmetrica.a "$PREFIX"/lib/
     mkdir -p "$PREFIX"/include/symmetrica
     cp *.h "$PREFIX"/include/symmetrica/
 fi
-
-make test
 
 actual=`echo 123 | ./test`
 expected=" 12.146304.367025.329675.766243.241881.295855.454217.088483.382315.
