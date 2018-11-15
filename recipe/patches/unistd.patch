@@ -1,0 +1,13 @@
+--- def.h
++++ def.h
+@@ -14,7 +14,8 @@
+ #include <stdio.h>
+ #include <memory.h>
+ #include <stdlib.h>
+-#include <unistd.h>
++#undef max
++#undef min
+ 
+ #ifndef TITELTEXT
+ #define TITELTEXT " Thu Feb 26 14:58:10 MET 1998 "
+

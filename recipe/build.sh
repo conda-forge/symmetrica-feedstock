@@ -1,25 +1,11 @@
 #!/bin/bash
 
-export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
-export LDFLAGS="-L$PREFIX/lib $LDFLAGS"
-export LD_LIBRARY_PATH="$PREFIX/lib:$LD_LIBRARY_PATH"
-export CFLAGS="-O2 -g $CFLAGS -fPIC -DFAST -DALLTRUE"
+rm makefile
+cp $RECIPE_DIR/CMakeLists.txt .
 
-chmod 644 *.c
-
-for patch in $RECIPE_DIR/patches/*.patch; do
-    [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-    git apply -p1 <"$patch"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error applying '$patch'"
-        exit 1
-    fi
-done
-
-cp "$RECIPE_DIR"/patches/makefile .
- 
-make
-make test
+cmake -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=yes .
+make -j${CPU_COUNT}
+make install
 
 actual=`echo 123 | ./test`
 expected=" 12.146304.367025.329675.766243.241881.295855.454217.088483.382315.
@@ -30,8 +16,3 @@ expected=" 12.146304.367025.329675.766243.241881.295855.454217.088483.382315.
 if [ "$actual" != "$expected" ]; then
     exit 1
 fi
-
-mkdir -p "$PREFIX"/lib
-cp libsymmetrica.a "$PREFIX"/lib/
-mkdir -p "$PREFIX"/include/symmetrica
-cp *.h "$PREFIX"/include/symmetrica/

@@ -7,35 +7,35 @@ package:
 
 source:
   fn: {{ name }}-{{ version }}.tar.gz
-  url: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/SYM2_0_tar.gz
-  sha256: bf52788dedc14c482e89f5e7efe8c60864a633314ddd446dd4602d5fdaca0ee2
-
-  # patches are not added here, because the files in the tarball have permission 400 and
-  # the permissions have to be corrected before patching.
-  #
-  # - patches/bruch.patch           # store integers in a temporary variable before freeing memory
-  # - patches/de.patch              # turn off banner
-  # - patches/int32.patch           # use int32_t and uint32_t for type INT.
-  # - patches/sort_sum_rename.patch # rename sort to sym_sort, sum to sym_sum
-  # - patches/makefile.patch        # Fix compiler, i.e., use $CC, and let it use $CFLAGS.
-  # - patches/return_values.patch   # return 0 in functions expecting int
+  # http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/SYM2_0_tar.gz
+  # not using upstream tarball because it has weird permissions and patching fails
+  url: http://mirrors-usa.go-parts.com/sage/sagemath/spkg/upstream/symmetrica/symmetrica-{{ version }}.tar.bz2
+  sha256: 5d2b30c962aea6dd9c8ba7108e260194418d4ae096bc09748eddb561f5d624a9
+  patches:
+  - patches/bruch.patch           # store integers in a temporary variable before freeing memory
+  - patches/de.patch              # turn off banner
+  - patches/int32.patch           # use int32_t and uint32_t for type INT.
+  - patches/sort_sum_rename.patch # rename sort to sym_sort, sum to sym_sum
+  - patches/return_values.patch   # return 0 in functions expecting int
+  - patches/unistd.patch   # return 0 in functions expecting int
 
 build:
-  number: 1001
-  skip: true  # [win]
+  number: 1003
+  skip: True    # [win and vc<14]
 
 requirements:
   build:
-    - libtool
+    - cmake
     - {{ compiler('c') }}
-    - git
   host:
   run:
 
 test:
   commands:
-    - test -f ${PREFIX}/include/symmetrica/macro.h
-    - test -f ${PREFIX}/lib/libsymmetrica.a
+    - test -f ${PREFIX}/include/symmetrica/macro.h   # [unix]
+    - test -f ${PREFIX}/lib/libsymmetrica.a          # [unix]
+    - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1       # [win]
+    - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1           # [win]
 
 about:
   home: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/index.html
