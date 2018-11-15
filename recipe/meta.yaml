@@ -20,13 +20,14 @@ source:
   - patches/unistd.patch   # return 0 in functions expecting int
 
 build:
-  number: 2
+  number: 1004
   skip: True    # [win and vc<14]
 
 requirements:
   build:
     - cmake
     - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
   host:
   run:
 
