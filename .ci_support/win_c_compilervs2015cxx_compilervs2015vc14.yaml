@@ -4,6 +4,8 @@ channel_sources:
 - conda-forge,defaults
 channel_targets:
 - conda-forge main
+cxx_compiler:
+- vs2015
 pin_run_as_build:
   vc:
     max_pin: x
@@ -12,3 +14,4 @@ vc:
 zip_keys:
 - - vc
   - c_compiler
+  - cxx_compiler
