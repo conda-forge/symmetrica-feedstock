@@ -19,7 +19,9 @@ set(HEADERS
     def.h macro.h
 )
 
-add_library(symmetrica STATIC ${SOURCES})
+option(BUILD_SHARED_LIBS "Build the shared library" OFF)
+
+add_library(symmetrica ${SOURCES})
 target_include_directories(symmetrica PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(symmetrica PRIVATE -DFAST -DALLTRUE)
 if (NOT WIN32)

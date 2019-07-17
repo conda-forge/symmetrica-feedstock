@@ -20,7 +20,7 @@ source:
   - patches/unistd.patch   # return 0 in functions expecting int
 
 build:
-  number: 1004
+  number: 1005
   skip: True    # [win and vc<14]
 
 requirements:
@@ -34,7 +34,7 @@ requirements:
 test:
   commands:
     - test -f ${PREFIX}/include/symmetrica/macro.h   # [unix]
-    - test -f ${PREFIX}/lib/libsymmetrica.a          # [unix]
+    - test -f ${PREFIX}/lib/libsymmetrica${SHLIB_EXT}          # [unix]
     - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1       # [win]
     - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1           # [win]
 
