@@ -9,7 +9,7 @@ source:
   fn: {{ name }}-{{ version }}.tar.gz
   # http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/SYM2_0_tar.gz
   # not using upstream tarball because it has weird permissions and patching fails
-  url: http://mirrors-usa.go-parts.com/sage/sagemath/spkg/upstream/symmetrica/symmetrica-{{ version }}.tar.bz2
+  url: http://mirrors.mit.edu/sage/spkg/upstream/symmetrica/symmetrica-{{ version }}.tar.bz2
   sha256: 5d2b30c962aea6dd9c8ba7108e260194418d4ae096bc09748eddb561f5d624a9
   patches:
   - patches/bruch.patch           # store integers in a temporary variable before freeing memory
