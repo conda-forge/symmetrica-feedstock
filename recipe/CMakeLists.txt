@@ -52,10 +52,12 @@ enable_testing()
 add_test(NAME run_test
          COMMAND ${CMAKE_COMMAND} "-DTEST_EXECUTABLE=$<TARGET_FILE:test_symmetrica>" -P "${CMAKE_CURRENT_BINARY_DIR}/run_test.cmake")
 
+include(GNUInstallDirs)
+
 install(TARGETS symmetrica
-    RUNTIME DESTINATION bin
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
 install(FILES ${HEADERS} DESTINATION include/symmetrica)
