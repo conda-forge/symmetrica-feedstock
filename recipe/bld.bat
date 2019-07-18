@@ -13,9 +13,6 @@ cmake -G "NMake Makefiles" ^
 nmake
 nmake install
 
-echo 123 | test.exe > output.txt
-
-FC output.txt "%RECIPE_DIR%"\test_output.txt
-
+ctest
 if errorlevel 1 exit 1
 
