@@ -66,4 +66,4 @@ install(TARGETS symmetrica
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 )
 
-install(FILES ${HEADERS} DESTINATION include/symmetrica)
+install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/symmetrica)
