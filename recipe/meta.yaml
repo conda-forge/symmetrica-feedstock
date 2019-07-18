@@ -20,7 +20,7 @@ source:
   - patches/unistd.patch   # return 0 in functions expecting int
 
 build:
-  number: 1006
+  number: 1007
   skip: True    # [win and vc<14]
   run_exports:
     - {{ pin_subpackage("symmetrica", max_pin="x.x") }}
