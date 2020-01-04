@@ -28,8 +28,10 @@ build:
 requirements:
   build:
     - cmake
+    - make
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - clangxx  # [ppc64le]
   host:
   run:
 
