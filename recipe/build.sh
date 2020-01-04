@@ -3,6 +3,11 @@
 rm makefile
 cp $RECIPE_DIR/CMakeLists.txt .
 
+if [[ "$target_platform" == "linux-ppc64le" ]]; then
+  export CXX=clang++
+  export CC=clang
+fi
+
 mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=$PREFIX \
