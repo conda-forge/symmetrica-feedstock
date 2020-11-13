@@ -15,7 +15,7 @@ CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-mpower8-vector//g")
 
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$PREFIX \
+cmake ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=$PREFIX \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POSITION_INDEPENDENT_CODE=yes \
     -DBUILD_SHARED_LIBS=yes \
@@ -25,4 +25,6 @@ cmake -DCMAKE_INSTALL_PREFIX=$PREFIX \
 make -j${CPU_COUNT}
 make install
 
+if [[ "${CONDA_BUILD_CROSS_COMPILATION}" != "1" ]]; then
 ctest
+fi
