@@ -1,3 +1,4 @@
+cd src
 rm makefile
 copy "%RECIPE_DIR%"\CMakeLists.txt .
 
