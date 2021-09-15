@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd src
 cp $RECIPE_DIR/CMakeLists.txt .
 
 if [[ "$target_platform" == "linux-ppc64le" ]]; then
