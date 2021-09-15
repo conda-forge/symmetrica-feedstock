@@ -1,4 +1,4 @@
-{% set version = "2.0" %}
+{% set version = "3.0.1" %}
 {% set name = "symmetrica" %}
 
 package:
@@ -6,21 +6,11 @@ package:
   version: {{ version }}
 
 source:
-  fn: {{ name }}-{{ version }}.tar.gz
-  # http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/SYM2_0_tar.gz
-  # not using upstream tarball because it has weird permissions and patching fails
-  url: http://mirrors.mit.edu/sage/spkg/upstream/symmetrica/symmetrica-{{ version }}.tar.bz2
-  sha256: 5d2b30c962aea6dd9c8ba7108e260194418d4ae096bc09748eddb561f5d624a9
-  patches:
-  - patches/bruch.patch           # store integers in a temporary variable before freeing memory
-  - patches/de.patch              # turn off banner
-  - patches/int32.patch           # use int32_t and uint32_t for type INT.
-  - patches/sort_sum_rename.patch # rename sort to sym_sort, sum to sym_sum
-  - patches/return_values.patch   # return 0 in functions expecting int
-  - patches/unistd.patch   # return 0 in functions expecting int
+  url: https://gitlab.com/sagemath/symmetrica/-/archive/{{ version }}/symmetrica-{{ version }}.tar.gz
+  sha256: 6e0fea5708d2deed8369ce4c7c2123a23a1c942d8cdf39c1f81258aec3ac04ec
 
 build:
-  number: 1007
+  number: 0
   skip: True    # [win and vc<14]
   run_exports:
     - {{ pin_subpackage("symmetrica", max_pin="x.x") }}
@@ -45,7 +35,7 @@ test:
 about:
   home: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/index.html
   license: ISC
-  license_file: {{ RECIPE_DIR }}/LICENSE
+  license_file: LICENSE
   summary: |
     Symmetrica is a collection of routines to handle several topics including
     ordinary representation theory of the symmetric group and related groups
