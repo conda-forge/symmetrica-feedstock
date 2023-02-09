@@ -1,17 +1,12 @@
 #!/bin/bash
 
-rm makefile
+cd src
 cp $RECIPE_DIR/CMakeLists.txt .
 
 if [[ "$target_platform" == "linux-ppc64le" ]]; then
   export CXX=clang++
   export CC=clang
 fi
-
-CFLAGS=$(echo "${CFLAGS}" | sed "s/-mpower8-fusion//g")
-CFLAGS=$(echo "${CFLAGS}" | sed "s/-mpower8-vector//g")
-CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-mpower8-fusion//g")
-CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-mpower8-vector//g")
 
 mkdir build
 cd build
