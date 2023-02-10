@@ -29,6 +29,7 @@ if (NOT WIN32)
 endif()
 set_property(TARGET symmetrica PROPERTY VERSION "2.0.0")
 set_property(TARGET symmetrica PROPERTY SOVERSION 2 )
+add_compile_options(/Za)
 
 add_executable(test_symmetrica test.c)
 target_link_libraries(test_symmetrica PRIVATE symmetrica)
