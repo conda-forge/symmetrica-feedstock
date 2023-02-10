@@ -2,7 +2,8 @@ project(symmetrica)
 cmake_minimum_required(VERSION 2.8)
 enable_language(C)
 if (MSVC)
-    # warning level 4
+    # disable Microsoft extensions to C
+    # that aren't compatible with ANSI C89/ISO C90
     add_compile_options(/Za)
 endif()
 
