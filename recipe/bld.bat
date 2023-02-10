@@ -9,7 +9,6 @@ cmake -G "NMake Makefiles" ^
     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DBUILD_SHARED_LIBS=ON ^
-    -D__STDC__=1 ^
     -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON .
 
 nmake
