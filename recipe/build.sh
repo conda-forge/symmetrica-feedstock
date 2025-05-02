@@ -21,5 +21,5 @@ make -j${CPU_COUNT}
 make install
 
 if [[ "${CONDA_BUILD_CROSS_COMPILATION}" != "1" ]]; then
-ctest
+  ctest || (cat ./**/LastTest.log; exit 1)
 fi
