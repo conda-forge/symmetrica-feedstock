@@ -10,6 +10,7 @@ source:
   sha256: de567da3138806efeb15d686442d05d90b8ffc49d52fb681d2c5a0e3a427b991
   patches:
     - 0001-Disable-pkg-config-support.patch  # [win]
+    - 0001-Fix-export-of-symbols.patch
 
 build:
   number: 0

@@ -1,0 +1,270 @@
+From 1645ceaf3e4b54c1bc5229805347bbd4801c1156 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Julian=20R=C3=BCth?= <julian.rueth@fsfe.org>
+Date: Sun, 14 Sep 2025 19:31:46 +0300
+Subject: [PATCH] Fix export of symbols
+
+---
+ src/Makefile.am |  3 +-
+ src/bruch.c     |  2 +-
+ src/de.c        | 30 ++++++++++----------
+ src/def.h       | 73 +++++++++++++++++++++++++++++--------------------
+ src/io.c        | 14 +++++-----
+ src/lo.c        |  2 +-
+ src/rest.c      | 10 +++----
+ 7 files changed, 75 insertions(+), 59 deletions(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index a68cbca..07b87da 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -180,10 +180,11 @@ libsymmetrica_la_LDFLAGS = \
+ 	-no-undefined
+ 
+ libsymmetrica_la_LIBADD = $(LIBM)
++libsymmetrica_la_CPPFLAGS += -DBUILD_LIBSYMMETRICA
+ 
+ 
+ # The "test" executable itself.
+-test_CPPFLAGS = $(libsymmetrica_la_CPPFLAGS)
++test_CPPFLAGS = -DFAST -DALLTRUE
+ test_SOURCES = test.c
+ test_LDADD = libsymmetrica.la
+ 
+diff --git a/src/bruch.c b/src/bruch.c
+index 50f2942..54887cf 100644
+--- a/src/bruch.c
++++ b/src/bruch.c
+@@ -6,7 +6,7 @@ static INT ggt_mp(OP, OP, OP);
+ static INT lowcf_br(OP, OP);
+ 
+ 
+-INT kuerzen_yn;
++LIBSYMMETRICA_API INT kuerzen_yn;
+ static struct bruch * callocbruch(void);
+ static INT freebruch(struct bruch *);
+ 
+diff --git a/src/de.c b/src/de.c
+index cc7b3c7..1b4ed68 100644
+--- a/src/de.c
++++ b/src/de.c
+@@ -18,18 +18,18 @@
+ #include <sys/param.h>
+ #endif /* unix */
+ 
+-OP cons_drei;   /* global INTEGER variable 3 */
+-OP cons_zwei;   /* global INTEGER variable 2 */
+-OP cons_eins;   /* global INTEGER variable 1 */
+-OP cons_negeins;/* global INTEGER variable -1 */
+-OP cons_null;   /* global INTEGER variable 0 */
+-FILE *texout;   /* global variable for texoutput */
+-INT no_mem_check=TRUE;
+-INT english_tableau=FALSE;
+-
+-INT doffset=0L;  /* global for debugprint */
+-
+-INT freeall_speichersize_max = (INT) 1000000;
++LIBSYMMETRICA_API OP cons_drei;   /* global INTEGER variable 3 */
++LIBSYMMETRICA_API OP cons_zwei;   /* global INTEGER variable 2 */
++LIBSYMMETRICA_API OP cons_eins;   /* global INTEGER variable 1 */
++LIBSYMMETRICA_API OP cons_negeins;/* global INTEGER variable -1 */
++LIBSYMMETRICA_API OP cons_null;   /* global INTEGER variable 0 */
++LIBSYMMETRICA_API FILE *texout;   /* global variable for texoutput */
++LIBSYMMETRICA_API INT no_mem_check=TRUE;
++LIBSYMMETRICA_API INT english_tableau=FALSE;
++
++LIBSYMMETRICA_API INT doffset=0L;  /* global for debugprint */
++
++LIBSYMMETRICA_API INT freeall_speichersize_max = (INT) 1000000;
+ int SYM_free(void *a)
+ {
+     if (sym_timelimit > 0L) check_time();
+@@ -329,9 +329,9 @@ INT memcheck(char *stelle)
+     return(OK);
+ }
+ 
+-INT sym_background = 0L;
+-INT sym_www = 0L;
+-INT sym_timelimit = 0L;
++LIBSYMMETRICA_API INT sym_background = 0L;
++LIBSYMMETRICA_API INT sym_www = 0L;
++LIBSYMMETRICA_API INT sym_timelimit = 0L;
+ void fatal_error(char *fehlertext)
+ {
+     fprintf(stderr,"fatal error in function %s\n",fehlertext);
+diff --git a/src/def.h b/src/def.h
+index 79929b7..d1ccd1f 100644
+--- a/src/def.h
++++ b/src/def.h
+@@ -2,6 +2,21 @@
+ /* INT should always be 4 byte */
+ #ifndef DEF_H
+ 
++#if defined _WIN32 || defined __CYGWIN__
++#define LIBSYMMETRICA_LIBRARY_IMPORT __declspec(dllimport)
++#define LIBSYMMETRICA_LIBRARY_EXPORT __declspec(dllexport)
++#else
++#define LIBSYMMETRICA_LIBRARY_IMPORT
++#define LIBSYMMETRICA_LIBRARY_EXPORT
++#endif
++
++#ifdef BUILD_LIBSYMMETRICA
++#define LIBSYMMETRICA_API LIBSYMMETRICA_LIBRARY_EXPORT
++#else
++#define LIBSYMMETRICA_API LIBSYMMETRICA_LIBRARY_IMPORT
++#endif
++
++
+ /* POSIX says that inttypes.h includes stdint.h */
+ #include <inttypes.h>
+ typedef int32_t INT;
+@@ -467,45 +482,45 @@ extern INT binom_values[BINOMLIMIT][BINOMLIMIT];
+ 
+ 
+ 
+-extern INT no_mem_check;
++extern LIBSYMMETRICA_API INT no_mem_check;
+ 
+ /* 0 == stored results will be used
+  * 1 == stored results will not be used
+  */
+-extern INT sym_no_results;
+-
+-extern OP cons_eins;
+-extern OP cons_negeins;
+-extern OP cons_null;
+-extern OP cons_zwei;
+-extern OP cons_drei;
+-extern FILE *texout;
+-extern INT (*check_time_co)(void);
+-extern INT zeilenposition; /* position inside one row of stdout output */
+-extern INT row_length;     /* length of one outputrow */
+-extern INT tex_row_length; /* length of one tex outputrow */
+-extern INT integer_format; /* if > 0  number of positions for INTEGER output */
+-extern INT english_tableau;
+-extern INT kuerzen_yn;
+-extern INT texmath_yn; /* 1 in mathmode, 0 not in mathmode */
+-extern INT scanoutput_yn; /* 1 no output, 0 bitte output */
+-extern INT texposition;
+-extern INT doffset;
+-extern INT sym_background;
+-extern INT sym_www;
+-extern INT sym_timelimit;
+-
+-extern INT freeall_speicherposition; /* global variable for callocobject/freeall */
+-extern INT freeall_speichersize;     /* global variable for callocobject/freeall */
+-extern OP *freeall_speicher;         /* global variable for callocobject/freeall */
++extern LIBSYMMETRICA_API INT sym_no_results;
++
++extern LIBSYMMETRICA_API OP cons_eins;
++extern LIBSYMMETRICA_API OP cons_negeins;
++extern LIBSYMMETRICA_API OP cons_null;
++extern LIBSYMMETRICA_API OP cons_zwei;
++extern LIBSYMMETRICA_API OP cons_drei;
++extern LIBSYMMETRICA_API FILE *texout;
++extern LIBSYMMETRICA_API INT (*check_time_co)(void);
++extern LIBSYMMETRICA_API INT zeilenposition; /* position inside one row of stdout output */
++extern LIBSYMMETRICA_API INT row_length;     /* length of one outputrow */
++extern LIBSYMMETRICA_API INT tex_row_length; /* length of one tex outputrow */
++extern LIBSYMMETRICA_API INT integer_format; /* if > 0  number of positions for INTEGER output */
++extern LIBSYMMETRICA_API INT english_tableau;
++extern LIBSYMMETRICA_API INT kuerzen_yn;
++extern LIBSYMMETRICA_API INT texmath_yn; /* 1 in mathmode, 0 not in mathmode */
++extern LIBSYMMETRICA_API INT scanoutput_yn; /* 1 no output, 0 bitte output */
++extern LIBSYMMETRICA_API INT texposition;
++extern LIBSYMMETRICA_API INT doffset;
++extern LIBSYMMETRICA_API INT sym_background;
++extern LIBSYMMETRICA_API INT sym_www;
++extern LIBSYMMETRICA_API INT sym_timelimit;
++
++extern LIBSYMMETRICA_API INT freeall_speicherposition; /* global variable for callocobject/freeall */
++extern LIBSYMMETRICA_API INT freeall_speichersize;                       /* global variable for callocobject/freeall */
++extern LIBSYMMETRICA_API OP *freeall_speicher;         /* global variable for callocobject/freeall */
+ 
+ #define SPEICHERSIZE (INT)10000
+ 
+ /* global variable for management of object space */
+-extern INT freeall_speichersize_max;
++extern LIBSYMMETRICA_API INT freeall_speichersize_max;
+ 
+ #ifdef LONGINTTRUE
+-extern struct ganzdaten gd; /* a global datastructure */
++extern LIBSYMMETRICA_API struct ganzdaten gd; /* a global datastructure */
+ #endif
+ 
+ #define div SYM_div
+diff --git a/src/io.c b/src/io.c
+index f80fb1f..bf02108 100644
+--- a/src/io.c
++++ b/src/io.c
+@@ -6,13 +6,13 @@ static INT write_polynom(OP);
+ 
+ 
+ /* global variables for output */
+-    INT zeilenposition;
+-    INT texposition;
+-    INT texmath_yn; /* 1 in mathmode */ /* 0 not in mathmode */
+-    INT scanoutput_yn; /* 1 no output */ /* 0 bitte output */
+-    INT row_length = 70;
+-    INT tex_row_length = 70;
+-    INT integer_format = 0; /* no format */
++    LIBSYMMETRICA_API INT zeilenposition;
++    LIBSYMMETRICA_API INT texposition;
++    LIBSYMMETRICA_API INT texmath_yn; /* 1 in mathmode */ /* 0 not in mathmode */
++    LIBSYMMETRICA_API INT scanoutput_yn; /* 1 no output */ /* 0 bitte output */
++    LIBSYMMETRICA_API INT row_length = 70;
++    LIBSYMMETRICA_API INT tex_row_length = 70;
++    LIBSYMMETRICA_API INT integer_format = 0; /* no format */
+ 
+ INT print_type(OBJECTKIND a)
+ {
+diff --git a/src/lo.c b/src/lo.c
+index 30be3ed..d95f7ab 100644
+--- a/src/lo.c
++++ b/src/lo.c
+@@ -14,7 +14,7 @@
+ #define MAXNEG (INT)(-2147483647-1) /*1000000000000000000000000000000 */
+ 
+ #ifdef LONGINTTRUE
+-struct ganzdaten gd; /* a global datastructure */
++LIBSYMMETRICA_API struct ganzdaten gd; /* a global datastructure */
+     static OP rl_o=NULL; /* obere grenze */
+     static OP rl_m=NULL; /* modulo */
+     static OP rl_x=NULL; /* ergebnis */
+diff --git a/src/rest.c b/src/rest.c
+index 26a073b..6f5133e 100644
+--- a/src/rest.c
++++ b/src/rest.c
+@@ -161,7 +161,7 @@ INT check_equal_2a(OP a, OP b, INT (*f)(OP, OP), INT *e)
+ 
+ 
+ #define SYMDIR "./symresults"
+-INT sym_no_results=0;     /* 0 == stored results will be used */
++LIBSYMMETRICA_API INT sym_no_results=0;     /* 0 == stored results will be used */
+             /* 1 == stored results will not be used */
+ 
+ static FILE *check_fopen(char *f, char *r)
+@@ -543,9 +543,9 @@ INT lastof(OP a, OP res)
+     }
+ 
+ 
+-INT freeall_speicherposition;
+-INT freeall_speichersize;
+-OP *freeall_speicher; /* global variable for callocobject/freeall */
++LIBSYMMETRICA_API INT freeall_speicherposition;
++LIBSYMMETRICA_API INT freeall_speichersize;
++LIBSYMMETRICA_API OP *freeall_speicher; /* global variable for callocobject/freeall */
+ 
+ INT speicher_anfang(void)
+     {
+@@ -3307,7 +3307,7 @@ INT b_ks_o(OBJECTKIND kind, OBJECTSELF self, OP object)
+ 
+ 
+ /* co routine called in check_time(), may be set by other programms */
+-INT (*check_time_co)(void) = NULL;
++LIBSYMMETRICA_API INT (*check_time_co)(void) = NULL;
+ 
+ INT check_time(void)
+ {
+-- 
+2.51.0
+

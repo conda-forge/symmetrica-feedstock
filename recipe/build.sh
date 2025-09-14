@@ -4,6 +4,7 @@ set -ex
 autoreconf -ivf
 
 ./configure --prefix="$PREFIX" || (cat config.log; false)
+
 [[ "$target_platform" == "win-64" ]] && patch_libtool
 
 make -j${CPU_COUNT}
