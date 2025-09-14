@@ -1,4 +1,5 @@
 #!/bin/bash
+shopt -s globstar
 
 cd src
 cp $RECIPE_DIR/CMakeLists.txt .
