@@ -1,4 +1,4 @@
-{% set version = "3.0.1" %}
+{% set version = "3.1.0" %}
 {% set name = "symmetrica" %}
 
 package:
@@ -7,30 +7,36 @@ package:
 
 source:
   url: https://gitlab.com/sagemath/symmetrica/-/archive/{{ version }}/symmetrica-{{ version }}.tar.gz
-  sha256: 6e0fea5708d2deed8369ce4c7c2123a23a1c942d8cdf39c1f81258aec3ac04ec
+  sha256: de567da3138806efeb15d686442d05d90b8ffc49d52fb681d2c5a0e3a427b991
+  patches:
+    - 0001-Disable-pkg-config-support.patch  # [win]
+    - 0001-Fix-export-of-symbols.patch
 
 build:
   number: 0
-  skip: True    # [win and vc<14]
+  skip: true  # [win and vc<14]
   run_exports:
     - {{ pin_subpackage("symmetrica", max_pin="x.x") }}
 
 requirements:
   build:
-    - cmake
-    - make
+    - libtool     # [unix]
+    - automake    # [unix]
+    - make        # [unix]
+    - gnuconfig   # [unix]
+    - pkg-config  # [unix]
+    - autotools_clang_conda  # [win]
     - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
-    - clangxx  # [ppc64le]
+    - {{ stdlib("c") }}
   host:
   run:
 
 test:
   commands:
-    - test -f ${PREFIX}/include/symmetrica/macro.h   # [unix]
-    - test -f ${PREFIX}/lib/libsymmetrica${SHLIB_EXT}          # [unix]
-    - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1       # [win]
-    - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1           # [win]
+    - test -f ${PREFIX}/include/symmetrica/macro.h            # [unix]
+    - test -f ${PREFIX}/lib/libsymmetrica${SHLIB_EXT}         # [unix]
+    - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1  # [win]
+    - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1       # [win]
 
 about:
   home: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/index.html

@@ -1,25 +1,14 @@
 #!/bin/bash
+set -ex
 
-cd src
-cp $RECIPE_DIR/CMakeLists.txt .
+autoreconf -ivf
 
-if [[ "$target_platform" == "linux-ppc64le" ]]; then
-  export CXX=clang++
-  export CC=clang
-fi
+./configure --prefix="$PREFIX" || (cat config.log; false)
 
-mkdir build
-cd build
-cmake ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=$PREFIX \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_POSITION_INDEPENDENT_CODE=yes \
-    -DBUILD_SHARED_LIBS=yes \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-..
+[[ "$target_platform" == "win-64" ]] && patch_libtool
 
 make -j${CPU_COUNT}
-make install
-
 if [[ "${CONDA_BUILD_CROSS_COMPILATION}" != "1" ]]; then
-ctest
+make check -j${CPU_COUNT} || (cat test/test-suite.log; false)
 fi
+make install
