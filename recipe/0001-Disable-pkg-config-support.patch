@@ -1,0 +1,50 @@
+From 99f1b83fa41c50f59d76e7f890bc0b2991330089 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Julian=20R=C3=BCth?= <julian.rueth@fsfe.org>
+Date: Sun, 14 Sep 2025 17:57:26 +0300
+Subject: [PATCH] Disable pkg-config support
+
+---
+ configure.ac    | 6 +-----
+ src/Makefile.am | 2 --
+ 2 files changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index f9395a4..3126809 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -14,10 +14,6 @@ AC_CONFIG_MACRO_DIR([m4])
+ dnl Any old source file suffices here; it's a canary.
+ AC_CONFIG_SRCDIR([src/galois.c])
+ 
+-# Adds --with-pkgconfigdir to the ./configure script and defines
+-# the @pkgconfigdir@ variable to be used elsewhere.
+-PKG_INSTALLDIR
+-
+ dnl This custom macro will check if the linker supports version scripts
+ dnl (like our src/symmetrica.map), and define HAVE_LD_VERSION_SCRIPT
+ dnl accordingly.
+@@ -70,7 +66,7 @@ AC_ARG_ENABLE([doc],
+ )
+ AM_CONDITIONAL([ENABLEDOC], [test x$enabledoc = xyes])
+ 
+-AC_CONFIG_FILES([ Makefile doc/Makefile src/Makefile src/symmetrica.pc ])
++AC_CONFIG_FILES([ Makefile doc/Makefile src/Makefile ])
+ 
+ LT_INIT([disable-static])
+ AC_OUTPUT
+diff --git a/src/Makefile.am b/src/Makefile.am
+index ccf084c..a68cbca 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -27,8 +27,6 @@ LIBSYMMETRICA_LT_VERSION = 3:0:0
+ include_HEADERS = symmetrica.h
+ pkginclude_HEADERS = def.h macro.h
+ 
+-pkgconfig_DATA = symmetrica.pc
+-
+ lib_LTLIBRARIES = libsymmetrica.la
+ 
+ # Always include the version script in the distribution tarball,
+-- 
+2.51.0
+
