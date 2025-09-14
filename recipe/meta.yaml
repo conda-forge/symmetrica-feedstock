@@ -17,8 +17,11 @@ build:
 
 requirements:
   build:
-    - cmake <4
-    - make
+    - libtool    # [unix]
+    - automake   # [unix]
+    - make       # [unix]
+    - gnuconfig  # [unix]
+    - autotools_clang_conda  # [win]
     - {{ compiler('c') }}
     - {{ stdlib("c") }}
     - {{ compiler('cxx') }}
@@ -28,10 +31,10 @@ requirements:
 
 test:
   commands:
-    - test -f ${PREFIX}/include/symmetrica/macro.h   # [unix]
-    - test -f ${PREFIX}/lib/libsymmetrica${SHLIB_EXT}          # [unix]
-    - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1       # [win]
-    - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1           # [win]
+    - test -f ${PREFIX}/include/symmetrica/macro.h            # [unix]
+    - test -f ${PREFIX}/lib/libsymmetrica${SHLIB_EXT}         # [unix]
+    - if not exist %LIBRARY_INC%\\symmetrica\\macro.h exit 1  # [win]
+    - if not exist %LIBRARY_LIB%\\symmetrica.lib exit 1       # [win]
 
 about:
   home: http://www.algorithm.uni-bayreuth.de/en/research/SYMMETRICA/index.html
