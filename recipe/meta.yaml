@@ -28,8 +28,6 @@ requirements:
     - autotools_clang_conda  # [win]
     - {{ compiler('c') }}
     - {{ stdlib("c") }}
-    - {{ compiler('cxx') }}
-    - clangxx  # [ppc64le]
   host:
   run:
 
